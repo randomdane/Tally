@@ -178,8 +178,9 @@ body { background: var(--bg-page); color: var(--text-1); font-family: var(--font
 .stat-neutral { color: var(--text-1); }
 
 /* ============ CHARTS ============ */
-.charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.chart-card { min-height: 240px; }
+.charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+.chart-card { min-height: 240px; display: flex; flex-direction: column; }
+.chart-card .chart-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
 .chart-body { padding: 12px 20px 16px; }
 .chart-empty { display: flex; flex-direction: column; align-items: center;
   justify-content: center; min-height: 180px; color: var(--text-3); font-size: 13px;
