@@ -1,7 +1,13 @@
 <title>Tally — Budget Planner</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0c0e15">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192.png">
 <script>
   const st = localStorage.getItem('tally-theme');
   document.documentElement.setAttribute('data-theme', st || 'dark');
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 <style>
 /* ============ TOKENS ============ */
