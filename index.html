@@ -339,6 +339,24 @@ td.cell-actions { text-align: right; width: 40px; }
 .txn-amount-neg { color: var(--expense); }
 .txn-amount-pos { color: var(--income); }
 
+/* ============ RECURRING ============ */
+.recurring-item { display: grid; grid-template-columns: 28px 1fr auto auto auto; align-items: center;
+  gap: 10px; padding: 10px 20px; border-bottom: 1px solid var(--divider); font-size: 13px; }
+.recurring-item:last-child { border-bottom: none; }
+.recurring-item:hover { background: var(--bg-inset); }
+.recurring-check { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+.recurring-name { font-weight: 500; color: var(--text-1); }
+.recurring-sub { font-size: 11px; color: var(--text-3); }
+.recurring-freq { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 3px;
+  background: var(--accent-dim); color: var(--accent); text-transform: capitalize; }
+.recurring-amount { font-weight: 600; color: var(--expense); min-width: 80px; text-align: right; }
+.recurring-amount.pos { color: var(--income); }
+.recurring-stats { display: flex; gap: 16px; padding: 12px 20px; flex-wrap: wrap; }
+.recurring-stats .import-stat { font-size: 12px; color: var(--text-2); }
+.recurring-select-all { display: flex; align-items: center; gap: 8px; padding: 8px 20px;
+  font-size: 12px; color: var(--text-3); border-bottom: 1px solid var(--divider); }
+.recurring-select-all input { accent-color: var(--accent); }
+
 /* ============ RANGE SLIDER ============ */
 input[type="range"] { -webkit-appearance: none; height: 4px; background: var(--bg-inset);
   border-radius: 2px; outline: none; }
@@ -588,6 +606,19 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
             <tbody id="txn-tbody"></tbody>
           </table>
         </div>
+      </div>
+      <div class="card" id="recurring-card" style="display:none">
+        <div class="card-header">
+          <h2 class="card-title">Detected Recurring Items</h2>
+          <div style="display:flex;gap:8px">
+            <button id="btn-add-selected" class="btn-primary btn-sm" style="display:none">Add Selected to Budget</button>
+            <button id="btn-detect" class="btn-outline btn-sm">Detect Recurring</button>
+          </div>
+        </div>
+        <p id="recurring-hint" style="padding:0 20px;font-size:13px;color:var(--text-2);margin:0 0 8px">
+          Analyzes your imported transactions to find repeating charges and suggests the frequency and average amount.
+        </p>
+        <div id="recurring-list"></div>
       </div>
     </section>
 
@@ -843,6 +874,7 @@ function render() {
   renderBudget();
   renderInsights();
   renderImport();
+  renderRecurring();
   renderAudit();
 }
 
@@ -1505,6 +1537,172 @@ document.getElementById('btn-clear-txn').addEventListener('click', () => {
     state.transactions = [];
     save(); render();
   }
+});
+
+/* ============ RECURRING DETECTION ============ */
+let detectedRecurring = [];
+
+function normalizeDesc(desc) {
+  return desc.toLowerCase()
+    .replace(/\d{2,}[\/\-]\d{2,}[\/\-]?\d{0,4}/g, '')
+    .replace(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\b/gi, '')
+    .replace(/ref\s*[:.]?\s*\S+/gi, '')
+    .replace(/\b[a-z0-9]{10,}\b/g, '')
+    .replace(/[^a-z\s&\-]/g, '')
+    .replace(/\s+/g, ' ').trim();
+}
+
+function detectRecurring() {
+  if (!state.transactions.length) return [];
+  const groups = {};
+  state.transactions.forEach(tx => {
+    if (tx.amount >= 0) return;
+    const key = normalizeDesc(tx.description);
+    if (!key || key.length < 2) return;
+    if (!groups[key]) groups[key] = { desc: tx.description, category: tx.category, entries: [] };
+    groups[key].entries.push({ date: tx.date, amount: Math.abs(tx.amount) });
+  });
+
+  const results = [];
+  for (const [key, group] of Object.entries(groups)) {
+    if (group.entries.length < 2) continue;
+    group.entries.sort((a, b) => a.date.localeCompare(b.date));
+
+    const intervals = [];
+    for (let i = 1; i < group.entries.length; i++) {
+      const d1 = new Date(group.entries[i - 1].date);
+      const d2 = new Date(group.entries[i].date);
+      if (isNaN(d1) || isNaN(d2)) continue;
+      intervals.push((d2 - d1) / 86400000);
+    }
+    if (!intervals.length) continue;
+
+    const medianInterval = intervals.slice().sort((a, b) => a - b)[Math.floor(intervals.length / 2)];
+    let freq = null;
+    if (medianInterval <= 10) freq = 'weekly';
+    else if (medianInterval <= 20) freq = 'fortnightly';
+    else if (medianInterval <= 45) freq = 'monthly';
+    else if (medianInterval <= 120) freq = 'quarterly';
+    else if (medianInterval <= 450) freq = 'yearly';
+    if (!freq) continue;
+
+    const amounts = group.entries.map(e => e.amount);
+    const avgAmt = amounts.reduce((s, a) => s + a, 0) / amounts.length;
+    const minAmt = Math.min(...amounts);
+    const maxAmt = Math.max(...amounts);
+    const variation = avgAmt > 0 ? (maxAmt - minAmt) / avgAmt : 0;
+
+    results.push({
+      key, name: group.desc, category: group.category,
+      frequency: freq, amount: Math.round(avgAmt * 100) / 100,
+      count: group.entries.length, medianInterval: Math.round(medianInterval),
+      variation, minAmt, maxAmt, selected: true
+    });
+  }
+
+  results.sort((a, b) => toMonthly(b.amount, b.frequency) - toMonthly(a.amount, a.frequency));
+  return results;
+}
+
+function renderRecurring() {
+  const card = document.getElementById('recurring-card');
+  const list = document.getElementById('recurring-list');
+  const hint = document.getElementById('recurring-hint');
+  const addBtn = document.getElementById('btn-add-selected');
+
+  if (!state.transactions.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  if (!detectedRecurring.length) {
+    list.innerHTML = '';
+    hint.style.display = '';
+    addBtn.style.display = 'none';
+    return;
+  }
+
+  hint.style.display = 'none';
+  const selectedCount = detectedRecurring.filter(r => r.selected).length;
+  const totalMonthly = detectedRecurring.filter(r => r.selected).reduce((s, r) => s + toMonthly(r.amount, r.frequency), 0);
+  addBtn.style.display = selectedCount > 0 ? '' : 'none';
+  addBtn.textContent = `Add ${selectedCount} to Budget`;
+
+  let html = `<div class="recurring-stats">
+    <span class="import-stat">Found <strong>${detectedRecurring.length}</strong> recurring items</span>
+    <span class="import-stat">Selected: <strong>${selectedCount}</strong></span>
+    <span class="import-stat">Monthly total: <strong style="color:var(--expense)">${fmt(totalMonthly)}</strong></span>
+  </div>`;
+
+  html += `<div class="recurring-select-all">
+    <input type="checkbox" id="recurring-check-all" ${selectedCount === detectedRecurring.length ? 'checked' : ''}>
+    <label for="recurring-check-all" style="cursor:pointer">Select all</label>
+  </div>`;
+
+  detectedRecurring.forEach((r, i) => {
+    const monthly = toMonthly(r.amount, r.frequency);
+    const variNote = r.variation > 0.1 ? ` · varies ${fmt(r.minAmt)}–${fmt(r.maxAmt)}` : '';
+    html += `<div class="recurring-item">
+      <input type="checkbox" class="recurring-check" data-idx="${i}" ${r.selected ? 'checked' : ''}>
+      <div>
+        <div class="recurring-name">${escHtml(r.name)}</div>
+        <div class="recurring-sub">${r.count} occurrences · ~${r.medianInterval} days apart${variNote}</div>
+      </div>
+      <span class="recurring-freq">${r.frequency}</span>
+      <span class="recurring-amount">${fmt(r.amount)}</span>
+      <span style="font-size:11px;color:var(--text-3)">${fmt(monthly)}/mo</span>
+    </div>`;
+  });
+
+  list.innerHTML = html;
+
+  document.getElementById('recurring-check-all').addEventListener('change', e => {
+    detectedRecurring.forEach(r => r.selected = e.target.checked);
+    renderRecurring();
+  });
+
+  list.querySelectorAll('.recurring-check').forEach(cb => {
+    cb.addEventListener('change', e => {
+      detectedRecurring[parseInt(e.target.dataset.idx)].selected = e.target.checked;
+      renderRecurring();
+    });
+  });
+}
+
+document.getElementById('btn-detect').addEventListener('click', () => {
+  detectedRecurring = detectRecurring();
+  if (!detectedRecurring.length) {
+    alert('No recurring patterns found. Need at least 2 similar transactions to detect a pattern.');
+    return;
+  }
+  renderRecurring();
+});
+
+document.getElementById('btn-add-selected').addEventListener('click', () => {
+  const toAdd = detectedRecurring.filter(r => r.selected);
+  if (!toAdd.length) return;
+  let added = 0;
+  toAdd.forEach(r => {
+    const exists = state.items.some(it =>
+      it.name.toLowerCase() === r.name.toLowerCase() && it.frequency === r.frequency
+    );
+    if (exists) return;
+    const item = {
+      id: uid(), name: r.name, amount: r.amount,
+      frequency: r.frequency, category: r.category,
+      type: 'expense', created: Date.now()
+    };
+    const taxRule = detectTax(item.name);
+    if (taxRule) {
+      item.taxPct = taxRule.pct;
+      item.taxHint = taxRule.hint;
+      if (taxRule.flag) item.taxMaybe = true;
+    }
+    state.items.push(item);
+    added++;
+  });
+  save();
+  detectedRecurring = detectedRecurring.filter(r => !r.selected);
+  render();
+  alert(`Added ${added} items to your budget.` + (toAdd.length - added > 0 ? ` ${toAdd.length - added} already existed.` : ''));
 });
 
 /* ============ EXPORT ============ */
