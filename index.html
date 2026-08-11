@@ -8,6 +8,16 @@
   const st = localStorage.getItem('tally-theme');
   document.documentElement.setAttribute('data-theme', st || 'dark');
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('btn-install').style.display = '';
+  });
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('btn-install').style.display = 'none';
+    deferredPrompt = null;
+  });
 </script>
 <style>
 /* ============ TOKENS ============ */
@@ -405,6 +415,7 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
       <span class="app-subtitle">Budget Planner</span>
     </div>
     <div class="header-right">
+      <button id="btn-install" class="btn-primary btn-sm" style="display:none" title="Install as desktop app">Install App</button>
       <button id="btn-export" class="btn-ghost btn-sm" title="Export budget as CSV">Export CSV</button>
       <button id="btn-save-data" class="btn-ghost btn-sm" title="Save all data as JSON">Save Data</button>
       <button id="btn-load-data" class="btn-ghost btn-sm" title="Load data from JSON file">Load Data</button>
@@ -674,6 +685,15 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 /* ============ THEME ============ */
+document.getElementById('btn-install').addEventListener('click', () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(r => {
+    if (r.outcome === 'accepted') document.getElementById('btn-install').style.display = 'none';
+    deferredPrompt = null;
+  });
+});
+
 document.getElementById('btn-theme').addEventListener('click', () => {
   const root = document.documentElement;
   const current = root.getAttribute('data-theme');

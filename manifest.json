@@ -1,4 +1,5 @@
 {
+  "id": "/Tally/",
   "name": "Tally — Budget Planner",
   "short_name": "Tally",
   "description": "Budget planning with expense tracking, CSV import, and savings insights",
@@ -8,7 +9,7 @@
   "background_color": "#0c0e15",
   "theme_color": "#0c0e15",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ]
 }
