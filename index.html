@@ -345,6 +345,34 @@ input[type="range"] { -webkit-appearance: none; height: 4px; background: var(--b
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px;
   height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; }
 
+/* ============ TAX ============ */
+.tax-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--good); background: rgba(12,163,12,0.1); padding: 1px 6px;
+  border-radius: 3px; cursor: pointer; white-space: nowrap; vertical-align: middle;
+  margin-left: 6px; }
+.tax-badge.maybe { color: var(--warn); background: rgba(208,139,0,0.1); }
+.tax-hint-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--bg-card); border: 1px solid var(--good); border-radius: var(--radius);
+  box-shadow: var(--shadow-lg); padding: 12px 18px; z-index: 200; max-width: 460px;
+  display: flex; gap: 10px; align-items: flex-start; animation: slideUp 0.3s ease; }
+.tax-hint-toast .tax-icon { color: var(--good); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.tax-hint-toast .tax-msg { font-size: 13px; color: var(--text-1); line-height: 1.4; }
+.tax-hint-toast .tax-msg strong { color: var(--good); }
+.tax-hint-toast .tax-dismiss { background: none; border: none; color: var(--text-3);
+  cursor: pointer; font-size: 16px; padding: 0 0 0 8px; flex-shrink: 0; }
+@keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+.tax-summary-card .tax-total { font-size: 22px; font-weight: 700; color: var(--good); }
+.tax-item-row { display: flex; align-items: center; gap: 8px; padding: 8px 0;
+  border-bottom: 1px solid var(--divider); font-size: 13px; }
+.tax-item-row:last-child { border-bottom: none; }
+.tax-item-name { flex: 1; }
+.tax-item-amount { font-weight: 600; font-variant-numeric: tabular-nums; }
+.tax-item-pct { font-size: 11px; color: var(--text-3); min-width: 40px; text-align: right; }
+.tax-disclaimer { font-size: 11px; color: var(--text-3); margin-top: 12px;
+  padding-top: 10px; border-top: 1px solid var(--divider); line-height: 1.4; }
+
 /* ============ AUDIT ============ */
 .audit-group { border-bottom: 1px solid var(--divider); }
 .audit-group:last-child { border-bottom: none; }
@@ -605,6 +633,46 @@ const CAT_KEYWORDS = {
   'Shopping':['amazon','ebay','kmart','target','big w','jb hi-fi','bunnings','officeworks','myer','david jones','clothing','shop','ikea','retail','store','purchase']
 };
 
+const TAX_RULES = [
+  { kw: ['work from home','home office','wfh'], pct: 100, hint: 'Home office running costs — claim actual or 67c/hr shortcut method' },
+  { kw: ['internet','nbn','broadband'], pct: 50, hint: 'Work-use portion deductible — keep a 4-week usage log' },
+  { kw: ['phone','mobile'], pct: 50, hint: 'Work-use portion deductible — keep a usage diary' },
+  { kw: ['laptop','computer','monitor','keyboard','mouse','webcam','headset'], pct: 50, hint: 'Work-use portion deductible — items over $300 depreciated over life' },
+  { kw: ['software','adobe','microsoft 365','office 365'], pct: 50, hint: 'Work-related software deductible for work-use portion' },
+  { kw: ['ai sub','chatgpt','claude','midjourney','copilot'], pct: 50, hint: 'Potentially deductible if used for income-producing work' },
+  { kw: ['union fee','union dues'], pct: 100, hint: 'Union and professional association fees are fully deductible' },
+  { kw: ['professional member','association fee','industry body'], pct: 100, hint: 'Professional membership fees related to your occupation' },
+  { kw: ['tax agent','accountant','tax return','tax advice'], pct: 100, hint: 'Cost of managing your tax affairs is deductible' },
+  { kw: ['income protection'], pct: 100, hint: 'Income protection insurance premiums are deductible' },
+  { kw: ['donation','charity','giving','red cross','beyond blue'], pct: 100, hint: 'Donations over $2 to DGR-registered charities are deductible' },
+  { kw: ['work cloth','uniform','ppe','safety boot','safety gear','hi-vis'], pct: 100, hint: 'Occupation-specific clothing and protective equipment' },
+  { kw: ['laundry','dry clean'], pct: 100, hint: 'Laundry of work-specific clothing — up to $150/yr without receipts' },
+  { kw: ['tool','equipment'], pct: 100, hint: 'Work tools under $300 instant write-off, over $300 depreciate' },
+  { kw: ['course','training','education','certification','conference','seminar','workshop'], pct: 100, hint: 'Self-education related to current employment is deductible' },
+  { kw: ['textbook','study material'], pct: 100, hint: 'Study materials for work-related education' },
+  { kw: ['financial advisor','investment fee','brokerage','platform fee','investment platform'], pct: 100, hint: 'Investment management fees deductible against investment income' },
+  { kw: ['domain','web hosting','hosting'], pct: 50, hint: 'Deductible if used for income-producing activity' },
+  { kw: ['co-working','coworking','hot desk'], pct: 100, hint: 'Deductible if used for income-producing work' },
+  { kw: ['car insurance','rego','registration','ctp','green slip'], pct: 0, hint: 'Deductible if car used for work (not commuting) — logbook or cents/km method', flag: true },
+  { kw: ['fuel','petrol'], pct: 0, hint: 'Deductible for work travel (not commute) — logbook or 85c/km method', flag: true },
+  { kw: ['parking'], pct: 0, hint: 'Work-related parking (not commute parking) may be deductible', flag: true },
+  { kw: ['toll'], pct: 0, hint: 'Tolls for work-related travel (not commute) may be deductible', flag: true },
+  { kw: ['super','superannuation','voluntary super'], pct: 100, hint: 'Voluntary contributions may be deductible — concessional cap $30,000/yr (2024-25)' },
+  { kw: ['health insurance'], pct: 0, hint: 'Not directly deductible, but having cover avoids the Medicare Levy Surcharge (1-1.5% of income if earning $93k+)', flag: true },
+  { kw: ['sunscreen','sunglasses'], pct: 100, hint: 'Deductible if required to work outdoors' },
+  { kw: ['travel insurance'], pct: 0, hint: 'Deductible if travel is work-related', flag: true },
+  { kw: ['vpn','password manager'], pct: 50, hint: 'Work-use portion potentially deductible' },
+  { kw: ['stationery','printer','ink','paper'], pct: 50, hint: 'Work-use portion of home office supplies' },
+];
+
+function detectTax(name) {
+  const lower = name.toLowerCase();
+  for (const rule of TAX_RULES) {
+    if (rule.kw.some(k => lower.includes(k))) return rule;
+  }
+  return null;
+}
+
 const SAMPLE = [
   {name:'Salary',amount:5500,frequency:'monthly',category:'Salary',type:'income'},
   {name:'Freelance',amount:800,frequency:'monthly',category:'Freelance',type:'income'},
@@ -733,6 +801,13 @@ document.getElementById('add-form').addEventListener('submit', e => {
     created: Date.now()
   };
   if (!item.name || !item.amount || item.amount <= 0) return;
+  const taxRule = detectTax(item.name);
+  if (taxRule) {
+    item.taxPct = taxRule.pct;
+    item.taxHint = taxRule.hint;
+    if (taxRule.flag) item.taxMaybe = true;
+    showTaxToast(item.name, taxRule);
+  }
   state.items.push(item);
   save();
   e.target.reset();
@@ -980,10 +1055,20 @@ function renderBudget() {
   }
   items.forEach(it => {
     const monthly = toMonthly(it.amount, it.frequency);
+    const rule = it.taxPct !== undefined ? it : null;
+    const autoRule = !rule ? detectTax(it.name) : null;
+    const hasTax = rule || autoRule;
+    const taxPct = rule ? rule.taxPct : (autoRule ? autoRule.pct : 0);
+    const taxMaybe = rule ? rule.taxMaybe : (autoRule ? autoRule.flag : false);
+    const taxTip = rule ? (rule.taxHint || '') : (autoRule ? autoRule.hint : '');
+    let taxBadge = '';
+    if (hasTax && (taxPct > 0 || taxMaybe)) {
+      taxBadge = `<span class="tax-badge ${taxMaybe ? 'maybe' : ''}" data-tax-id="${it.id}" title="${escHtml(taxTip)}">${taxMaybe ? 'TAX?' : 'TAX'}${taxPct > 0 ? ' ' + taxPct + '%' : ''}</span>`;
+    }
     const tr = document.createElement('tr');
     tr.className = it.type === 'income' ? 'row-income' : 'row-expense';
     tr.innerHTML = `
-      <td class="cell-name" data-field="name" data-id="${it.id}">${escHtml(it.name)}</td>
+      <td class="cell-name" data-field="name" data-id="${it.id}">${escHtml(it.name)}${taxBadge}</td>
       <td data-field="category" data-id="${it.id}"><div class="cell-cat"><span class="cat-dot" style="background:${catColor(it.category)}"></span>${escHtml(it.category)}</div></td>
       <td class="align-r" data-field="amount" data-id="${it.id}">${it.type === 'income' ? '+' : ''}$${it.amount.toLocaleString('en',{minimumFractionDigits: it.amount % 1 ? 2 : 0})}</td>
       <td data-field="frequency" data-id="${it.id}">${FREQ_LABELS[it.frequency]}</td>
@@ -1153,6 +1238,50 @@ function renderInsights() {
       <div class="sim-result" id="sim-result"></div>
     </div>
   </div>`;
+
+  // Tax Deductions Summary
+  const taxItems = [];
+  state.items.forEach(it => {
+    if (it.type === 'income') return;
+    const rule = it.taxPct !== undefined ? it : null;
+    const autoRule = !rule ? detectTax(it.name) : null;
+    const pctVal = rule ? rule.taxPct : (autoRule ? autoRule.pct : 0);
+    const maybe = rule ? rule.taxMaybe : (autoRule ? autoRule.flag : false);
+    const hint = rule ? (rule.taxHint || '') : (autoRule ? autoRule.hint : '');
+    if (pctVal > 0 || maybe) {
+      const annual = toMonthly(it.amount, it.frequency) * 12;
+      const deductible = pctVal > 0 ? annual * (pctVal / 100) : 0;
+      taxItems.push({ name: it.name, annual, pct: pctVal, deductible, maybe, hint });
+    }
+  });
+
+  const totalDeductible = taxItems.filter(t => !t.maybe).reduce((s, t) => s + t.deductible, 0);
+  const maybeDed = taxItems.filter(t => t.maybe).reduce((s, t) => s + t.annual, 0);
+  const marginalRate = t.income * 12 > 190000 ? 0.45 : t.income * 12 > 135000 ? 0.37 : t.income * 12 > 45000 ? 0.325 : t.income * 12 > 18200 ? 0.19 : 0;
+  const taxSaving = totalDeductible * marginalRate;
+
+  html += `<div class="card insight-section tax-summary-card">
+    <h2 class="card-title">Tax Deductions (ATO)</h2>
+    <div class="card-body">`;
+  if (taxItems.length) {
+    html += `<div style="display:flex;gap:24px;margin-bottom:16px;flex-wrap:wrap">
+      <div><div class="stat-label">Claimable Deductions</div><div class="tax-total">${fmt(totalDeductible)}<span style="font-size:13px;font-weight:400;color:var(--text-3)">/yr</span></div></div>
+      <div><div class="stat-label">Est. Tax Saving</div><div class="tax-total">${fmt(taxSaving)}<span style="font-size:13px;font-weight:400;color:var(--text-3)">/yr at ${(marginalRate*100).toFixed(0)}% marginal rate</span></div></div>
+      ${maybeDed > 0 ? `<div><div class="stat-label">Possibly Deductible</div><div style="font-size:22px;font-weight:700;color:var(--warn)">${fmt(maybeDed)}<span style="font-size:13px;font-weight:400;color:var(--text-3)">/yr (depends on use)</span></div></div>` : ''}
+    </div>`;
+    taxItems.forEach(ti => {
+      html += `<div class="tax-item-row">
+        <span class="tax-badge ${ti.maybe ? 'maybe' : ''}" style="margin-left:0">${ti.maybe ? 'TAX?' : 'TAX'}</span>
+        <span class="tax-item-name">${escHtml(ti.name)}</span>
+        <span class="tax-item-pct">${ti.pct > 0 ? ti.pct + '%' : 'check'}</span>
+        <span class="tax-item-amount">${fmt(ti.deductible || ti.annual)}</span>
+      </div>`;
+    });
+    html += `<div class="tax-disclaimer">Estimates only — not tax advice. Deductibility depends on your individual circumstances, work-use percentage, and ATO rules. Keep receipts and records. Consult a registered tax agent for your specific situation.</div>`;
+  } else {
+    html += '<div style="color:var(--text-3);font-size:13px">No potential deductions detected. Add expenses like work-from-home costs, union fees, or professional development to see tax insights.</div>';
+  }
+  html += '</div></div>';
 
   content.innerHTML = html;
 
@@ -1433,6 +1562,19 @@ document.getElementById('load-data-input').addEventListener('change', e => {
   reader.readAsText(file);
   e.target.value = '';
 });
+
+/* ============ TAX TOAST ============ */
+let taxToastTimer;
+function showTaxToast(name, rule) {
+  clearTimeout(taxToastTimer);
+  document.querySelectorAll('.tax-hint-toast').forEach(t => t.remove());
+  const div = document.createElement('div');
+  div.className = 'tax-hint-toast';
+  div.innerHTML = `<span class="tax-icon">&#9432;</span><div class="tax-msg"><strong>Potential tax deduction:</strong> ${escHtml(name)}<br>${escHtml(rule.hint)}${rule.pct > 0 ? ` (${rule.pct}% deductible)` : ''}</div><button class="tax-dismiss">&times;</button>`;
+  div.querySelector('.tax-dismiss').addEventListener('click', () => div.remove());
+  document.body.appendChild(div);
+  taxToastTimer = setTimeout(() => div.remove(), 6000);
+}
 
 /* ============ TOOLTIP ============ */
 const tooltip = document.getElementById('tooltip');
