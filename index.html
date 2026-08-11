@@ -737,7 +737,18 @@ function save() {
 function load() {
   try {
     const d = JSON.parse(localStorage.getItem('tally-data'));
-    if (d) { state.items = d.items || []; state.transactions = d.transactions || []; }
+    if (d) {
+      state.items = d.items || [];
+      state.transactions = d.transactions || [];
+      let fixed = false;
+      state.transactions.forEach(tx => {
+        if (tx.date && !tx.date.match(/^\d{4}-\d{2}-\d{2}/)) {
+          tx.date = parseDate(tx.date);
+          fixed = true;
+        }
+      });
+      if (fixed) save();
+    }
   } catch(e) {}
 }
 
@@ -967,7 +978,9 @@ function renderTrendChart() {
 
   const monthMap = {};
   state.transactions.forEach(tx => {
-    const m = tx.date.slice(0, 7);
+    const iso = tx.date && tx.date.match(/^\d{4}-\d{2}/) ? tx.date : parseDate(tx.date);
+    const m = iso.slice(0, 7);
+    if (!m || !m.match(/^\d{4}-\d{2}$/)) return;
     if (!monthMap[m]) monthMap[m] = { income: 0, expenses: 0 };
     if (tx.amount >= 0) monthMap[m].income += tx.amount;
     else monthMap[m].expenses += Math.abs(tx.amount);
@@ -979,7 +992,7 @@ function renderTrendChart() {
     legend.innerHTML = '';
     return;
   }
-  const labels = last6.map(m => { const [y, mo] = m.split('-'); return new Date(y, mo - 1).toLocaleDateString('en', { month: 'short' }); });
+  const labels = last6.map(m => { const [y, mo] = m.split('-'); const d = new Date(y, mo - 1); return isNaN(d) ? m : d.toLocaleDateString('en', { month: 'short' }); });
   const incData = last6.map(m => monthMap[m].income);
   const expData = last6.map(m => monthMap[m].expenses);
   legend.innerHTML = `<div class="legend-item"><span class="legend-swatch" style="background:var(--income)"></span>Income</div><div class="legend-item"><span class="legend-swatch" style="background:var(--expense)"></span>Expenses</div>`;
@@ -1424,6 +1437,30 @@ function parseAmount(str) {
   return isNaN(n) ? 0 : (neg ? -Math.abs(n) : n);
 }
 
+function parseDate(str) {
+  if (!str) return '';
+  str = str.trim();
+  // DD/MM/YYYY or DD-MM-YYYY (AU format)
+  let m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (m) {
+    const day = m[1].padStart(2, '0'), mon = m[2].padStart(2, '0'), yr = m[3];
+    return `${yr}-${mon}-${day}`;
+  }
+  // YYYY-MM-DD already ISO
+  m = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  // DD Mon YYYY or DD Month YYYY
+  m = str.match(/^(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{4})$/i);
+  if (m) {
+    const months = {jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
+    return `${m[3]}-${months[m[2].toLowerCase().slice(0,3)]}-${m[1].padStart(2,'0')}`;
+  }
+  // Fallback: try native parser
+  const parsed = new Date(str);
+  if (!isNaN(parsed)) return parsed.toISOString().slice(0, 10);
+  return str;
+}
+
 function categorize(desc) {
   const lower = desc.toLowerCase();
   for (const [cat, keywords] of Object.entries(CAT_KEYWORDS)) {
@@ -1517,9 +1554,7 @@ document.getElementById('btn-do-import').addEventListener('click', () => {
     if (amt === 0) return;
     let isoDate = '';
     try {
-      const parsed = new Date(date);
-      if (!isNaN(parsed)) isoDate = parsed.toISOString().slice(0, 10);
-      else isoDate = date;
+      isoDate = parseDate(date);
     } catch { isoDate = date; }
     state.transactions.push({
       id: uid(), date: isoDate, description: desc, amount: amt, category: categorize(desc)
