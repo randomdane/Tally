@@ -1,4 +1,4 @@
-const CACHE = 'tally-v1';
+const CACHE = 'tally-v2';
 const ASSETS = ['/Tally/', '/Tally/index.html', '/Tally/manifest.json'];
 
 self.addEventListener('install', e => {
