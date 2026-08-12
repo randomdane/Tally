@@ -41,7 +41,7 @@
   --border-focus: #2a78d6;
   --divider: #eceef4;
   --cat-1: #2a78d6; --cat-2: #eb6834; --cat-3: #1baf7a; --cat-4: #eda100;
-  --cat-5: #e87ba4; --cat-6: #008300; --cat-7: #4a3aa7; --cat-8: #e34948; --cat-9: #0e9aa7;
+  --cat-5: #e87ba4; --cat-6: #008300; --cat-7: #4a3aa7; --cat-8: #e34948; --cat-9: #0e9aa7; --cat-10: #b8860b;
   --grid: #e8eaf1; --axis: #cfd2dc;
   --shadow-card: 0 1px 3px rgba(17,20,28,0.04), 0 0 1px rgba(17,20,28,0.06);
   --shadow-lg: 0 4px 16px rgba(17,20,28,0.08);
@@ -60,7 +60,7 @@
     --expense-dim: rgba(217,89,38,0.14); --border: #262840;
     --border-focus: #3987e5; --divider: #1e2030;
     --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70; --cat-4: #c98500;
-    --cat-5: #d55181; --cat-6: #008300; --cat-7: #9085e9; --cat-8: #e66767; --cat-9: #12b5c4;
+    --cat-5: #d55181; --cat-6: #008300; --cat-7: #9085e9; --cat-8: #e66767; --cat-9: #12b5c4; --cat-10: #d4a017;
     --grid: #222438; --axis: #2e3048;
     --shadow-card: 0 1px 3px rgba(0,0,0,0.2), 0 0 1px rgba(0,0,0,0.3);
     --shadow-lg: 0 4px 16px rgba(0,0,0,0.35);
@@ -93,7 +93,7 @@
   --expense-dim: rgba(235,104,52,0.09); --border: #d8dbe5;
   --border-focus: #2a78d6; --divider: #eceef4;
   --cat-1: #2a78d6; --cat-2: #eb6834; --cat-3: #1baf7a; --cat-4: #eda100;
-  --cat-5: #e87ba4; --cat-6: #008300; --cat-7: #4a3aa7; --cat-8: #e34948; --cat-9: #0e9aa7;
+  --cat-5: #e87ba4; --cat-6: #008300; --cat-7: #4a3aa7; --cat-8: #e34948; --cat-9: #0e9aa7; --cat-10: #b8860b;
   --grid: #e8eaf1; --axis: #cfd2dc;
   --shadow-card: 0 1px 3px rgba(17,20,28,0.04), 0 0 1px rgba(17,20,28,0.06);
   --shadow-lg: 0 4px 16px rgba(17,20,28,0.08);
@@ -641,18 +641,18 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
 /* ============ CONSTANTS ============ */
 const FREQ = { weekly: 52/12, fortnightly: 26/12, monthly: 1, quarterly: 1/3, yearly: 1/12 };
 const FREQ_LABELS = { weekly:'Weekly', fortnightly:'Fortnightly', monthly:'Monthly', quarterly:'Quarterly', yearly:'Yearly' };
-const EXP_CATS = ['Housing','Food & Dining','Transport','Utilities','Entertainment','Health','Shopping','Business','Other'];
+const EXP_CATS = ['Housing','Food & Dining','Transport','Utilities','Entertainment','Health','Shopping','Business','Investing','Other'];
 const INC_CATS = ['Salary','Freelance','Investments','Other Income'];
 const CAT_VAR = {
   'Housing':'--cat-1','Food & Dining':'--cat-2','Transport':'--cat-3','Utilities':'--cat-4',
-  'Entertainment':'--cat-5','Health':'--cat-6','Shopping':'--cat-7','Business':'--cat-9','Other':'--cat-8',
+  'Entertainment':'--cat-5','Health':'--cat-6','Shopping':'--cat-7','Business':'--cat-9','Investing':'--cat-10','Other':'--cat-8',
   'Salary':'--income','Freelance':'--income','Investments':'--income','Other Income':'--income'
 };
 const NEEDS = ['Housing','Utilities','Transport','Health','Business'];
 const WANTS = ['Food & Dining','Entertainment','Shopping','Other'];
 const BENCHMARKS = {
   'Housing':[25,35],'Food & Dining':[10,15],'Transport':[10,15],'Utilities':[5,10],
-  'Entertainment':[5,10],'Health':[2,5],'Shopping':[5,10],'Business':[0,20],'Other':[0,5]
+  'Entertainment':[5,10],'Health':[2,5],'Shopping':[5,10],'Business':[0,20],'Investing':[5,20],'Other':[0,5]
 };
 const CAT_KEYWORDS = {
   'Housing':['rent','mortgage','property','strata','body corp','real estate','home loan','lease'],
@@ -662,7 +662,8 @@ const CAT_KEYWORDS = {
   'Entertainment':['netflix','spotify','disney','stan','binge','paramount','cinema','movies','game','steam','playstation','xbox','subscription','hulu','youtube','apple tv','ticket'],
   'Health':['pharmacy','chemist','priceline','doctor','medical','gym','health','dental','physio','chiro','medibank','bupa','nib','hcf','hospital','optical','vision'],
   'Shopping':['amazon','ebay','kmart','target','big w','jb hi-fi','bunnings','officeworks','myer','david jones','clothing','shop','ikea','retail','store','purchase'],
-  'Business':['abn','business','invoice','client','contractor','co-working','coworking','domain','hosting','advertising','marketing','google ads','facebook ads','canva','xero','myob','quickbooks','square','stripe','shopify','wix','squarespace','adobe','software license','saas','office supplies','postage','freight','courier']
+  'Business':['abn','business','invoice','client','contractor','co-working','coworking','domain','hosting','advertising','marketing','google ads','facebook ads','canva','xero','myob','quickbooks','square','stripe','shopify','wix','squarespace','adobe','software license','saas','office supplies','postage','freight','courier'],
+  'Investing':['vanguard','etf','shares','stock','commsec','selfwealth','stake','superhero','spaceship','raiz','sharesight','brokerage','dividend','crypto','bitcoin','btc','eth','coinspot','swyftx','binance','investment','managed fund','term deposit']
 };
 
 const TAX_RULES = [
