@@ -357,6 +357,12 @@ td.cell-actions { text-align: right; width: 40px; }
   font-size: 12px; color: var(--text-3); border-bottom: 1px solid var(--divider); }
 .recurring-select-all input { accent-color: var(--accent); }
 
+/* ============ BUCKET BREAKDOWN ============ */
+.bucket-breakdown { margin-top: 8px; border-top: 1px solid var(--divider); padding-top: 6px; }
+.bucket-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px; }
+.bucket-cat { flex: 1; color: var(--text-2); }
+.bucket-amt { color: var(--text-1); font-weight: 500; font-variant-numeric: tabular-nums; }
+
 /* ============ SORT ============ */
 .sortable { cursor: pointer; user-select: none; white-space: nowrap; }
 .sortable:hover { color: var(--accent); }
@@ -1219,6 +1225,29 @@ function startEdit(td) {
 }
 
 /* ---- INSIGHTS ---- */
+function buildBucketBreakdown(bucket, cats, income) {
+  let items;
+  if (bucket === 'savings') {
+    const savingCats = EXP_CATS.filter(c => !NEEDS.includes(c) && !WANTS.includes(c));
+    items = savingCats.map(cat => {
+      const total = state.items.filter(i => i.type === 'expense' && i.category === cat)
+        .reduce((s, i) => s + toMonthly(i.amount, i.frequency), 0);
+      return { cat, total };
+    }).filter(i => i.total > 0);
+  } else {
+    items = cats.map(cat => {
+      const total = state.items.filter(i => i.type === 'expense' && i.category === cat)
+        .reduce((s, i) => s + toMonthly(i.amount, i.frequency), 0);
+      return { cat, total };
+    }).filter(i => i.total > 0);
+  }
+  if (!items.length) return '';
+  items.sort((a, b) => b.total - a.total);
+  return '<div class="bucket-breakdown">' + items.map(i =>
+    `<div class="bucket-row"><span class="cat-dot" style="background:${catColor(i.cat)}"></span><span class="bucket-cat">${escHtml(i.cat)}</span><span class="bucket-amt">${fmt(i.total)}/mo</span></div>`
+  ).join('') + '</div>';
+}
+
 function renderInsights() {
   const content = document.getElementById('insights-content');
   const empty = document.getElementById('insights-empty');
@@ -1262,16 +1291,19 @@ function renderInsights() {
         <div class="rule-cell-label">Needs</div>
         <div class="rule-cell-value" style="color:var(--cat-1)">${(needsPct * 100).toFixed(0)}%</div>
         <div class="rule-cell-target">Target: 50% · ${fmt(needsTotal)}/mo</div>
+        ${buildBucketBreakdown('needs', NEEDS, t.income)}
       </div>
       <div class="rule-cell rule-wants">
         <div class="rule-cell-label">Wants</div>
         <div class="rule-cell-value" style="color:var(--cat-5)">${(wantsPct * 100).toFixed(0)}%</div>
         <div class="rule-cell-target">Target: 30% · ${fmt(wantsTotal)}/mo</div>
+        ${buildBucketBreakdown('wants', WANTS, t.income)}
       </div>
       <div class="rule-cell rule-save">
         <div class="rule-cell-label">Savings</div>
         <div class="rule-cell-value" style="color:var(--income)">${(savePct * 100).toFixed(0)}%</div>
         <div class="rule-cell-target">Target: 20% · ${fmt(savingsTotal)}/mo</div>
+        ${buildBucketBreakdown('savings', null, t.income)}
       </div>
     </div>
   </div>`;
