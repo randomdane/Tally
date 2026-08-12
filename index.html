@@ -357,6 +357,67 @@ td.cell-actions { text-align: right; width: 40px; }
   font-size: 12px; color: var(--text-3); border-bottom: 1px solid var(--divider); }
 .recurring-select-all input { accent-color: var(--accent); }
 
+/* ============ GOALS & DEBT ============ */
+.goal-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 20px; }
+.goal-form input { height: 36px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 0 10px; font-family: var(--font); font-size: 13px;
+  background: var(--bg-inset); color: var(--text-1); }
+.goal-form input:focus { border-color: var(--accent); outline: none; }
+.goal-form-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+.goal-item { padding: 16px 20px; border-bottom: 1px solid var(--divider); }
+.goal-item:last-child { border-bottom: none; }
+.goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.goal-name { font-weight: 600; font-size: 14px; color: var(--text-1); }
+.goal-meta { font-size: 12px; color: var(--text-3); }
+.goal-bar-bg { height: 8px; background: var(--bg-inset); border-radius: 4px; overflow: hidden; }
+.goal-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+.goal-stats { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--text-2); }
+.goal-projection { font-size: 12px; color: var(--accent); margin-top: 4px; }
+.goal-actions { display: flex; gap: 6px; }
+.goal-actions button { background: none; border: none; cursor: pointer; font-size: 12px; padding: 2px 6px;
+  border-radius: 3px; }
+.goal-actions .btn-edit { color: var(--text-3); }
+.goal-actions .btn-edit:hover { color: var(--accent); background: var(--accent-dim); }
+.goal-actions .btn-del { color: var(--text-3); }
+.goal-actions .btn-del:hover { color: var(--crit); background: rgba(208,59,59,0.1); }
+.debt-item { padding: 16px 20px; border-bottom: 1px solid var(--divider); }
+.debt-item:last-child { border-bottom: none; }
+.debt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.debt-name { font-weight: 600; font-size: 14px; color: var(--text-1); }
+.debt-details { display: flex; gap: 16px; font-size: 12px; color: var(--text-2); flex-wrap: wrap; }
+.debt-details strong { color: var(--text-1); }
+.strategy-section { padding: 16px 20px; }
+.strategy-title { font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 10px; }
+.strategy-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.strategy-card { background: var(--bg-inset); border-radius: var(--radius); padding: 14px; }
+.strategy-card h4 { font-size: 13px; font-weight: 600; margin: 0 0 8px; color: var(--text-1); }
+.strategy-card .strat-val { font-size: 20px; font-weight: 700; }
+.strategy-card .strat-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.strategy-order { font-size: 12px; color: var(--text-2); }
+.strategy-order ol { margin: 4px 0 0 18px; padding: 0; }
+.strategy-order li { padding: 2px 0; }
+.strategy-order li strong { color: var(--text-1); }
+.strategy-winner { font-size: 12px; font-weight: 600; color: var(--good); margin-top: 8px; }
+
+/* ============ MONTH-OVER-MONTH ============ */
+.mom-item { display: flex; align-items: center; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid var(--divider); font-size: 13px; }
+.mom-item:last-child { border-bottom: none; }
+.mom-arrow { font-size: 16px; width: 20px; text-align: center; }
+.mom-arrow.up { color: var(--crit); }
+.mom-arrow.down { color: var(--good); }
+.mom-arrow.flat { color: var(--text-3); }
+.mom-cat { flex: 1; color: var(--text-1); font-weight: 500; }
+.mom-amounts { text-align: right; font-variant-numeric: tabular-nums; }
+.mom-amounts .mom-prev { font-size: 12px; color: var(--text-3); }
+.mom-change { min-width: 80px; text-align: right; font-weight: 600; font-size: 12px; }
+.mom-change.up { color: var(--crit); }
+.mom-change.down { color: var(--good); }
+.mom-months { display: flex; gap: 8px; padding: 0 0 12px; flex-wrap: wrap; }
+.mom-month-btn { background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 4px 10px; font-size: 12px; color: var(--text-2); cursor: pointer; font-family: var(--font); }
+.mom-month-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
 /* ============ BUCKET BREAKDOWN ============ */
 .bucket-breakdown { margin-top: 8px; border-top: 1px solid var(--divider); padding-top: 6px; }
 .bucket-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px; }
@@ -493,6 +554,7 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
     <button class="tab-btn active" data-tab="overview">Overview</button>
     <button class="tab-btn" data-tab="budget">Budget</button>
     <button class="tab-btn" data-tab="insights">Insights</button>
+    <button class="tab-btn" data-tab="goals">Goals</button>
     <button class="tab-btn" data-tab="import">Import</button>
     <button class="tab-btn" data-tab="audit">Audit</button>
   </nav>
@@ -580,6 +642,57 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
       <div id="insights-empty" class="card empty-state" style="display:none">
         <p>Add budget items to see insights</p>
         <p class="empty-hint">The Insights tab analyses your spending patterns and finds savings</p>
+      </div>
+    </section>
+
+    <!-- GOALS -->
+    <section id="tab-goals" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Savings Goals</h2>
+          <button id="btn-add-goal" class="btn-primary btn-sm">+ Add Goal</button>
+        </div>
+        <div id="goal-form-wrap" style="display:none">
+          <form id="goal-form" class="goal-form">
+            <input name="gname" placeholder="Goal name (e.g. Emergency Fund)" required>
+            <input name="gtarget" type="number" step="0.01" min="1" placeholder="Target $" required>
+            <input name="gcurrent" type="number" step="0.01" min="0" placeholder="Saved so far $" value="0">
+            <input name="gdeadline" type="date" placeholder="Deadline (optional)">
+            <div class="goal-form-actions">
+              <button type="button" id="btn-cancel-goal" class="btn-ghost btn-sm">Cancel</button>
+              <button type="submit" class="btn-primary btn-sm">Save Goal</button>
+            </div>
+          </form>
+        </div>
+        <div id="goals-list"></div>
+        <div id="goals-empty" class="empty-state" style="display:none">
+          <p>No savings goals yet</p>
+          <p style="font-size:12px">Set targets for things like an emergency fund, holiday, or house deposit</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Debt Payoff Planner</h2>
+          <button id="btn-add-debt" class="btn-primary btn-sm">+ Add Debt</button>
+        </div>
+        <div id="debt-form-wrap" style="display:none">
+          <form id="debt-form" class="goal-form">
+            <input name="dname" placeholder="Debt name (e.g. Car Loan)" required>
+            <input name="dbalance" type="number" step="0.01" min="1" placeholder="Balance $" required>
+            <input name="drate" type="number" step="0.01" min="0" placeholder="Interest rate %" required>
+            <input name="dminpay" type="number" step="0.01" min="1" placeholder="Min payment $/mo" required>
+            <div class="goal-form-actions">
+              <button type="button" id="btn-cancel-debt" class="btn-ghost btn-sm">Cancel</button>
+              <button type="submit" class="btn-primary btn-sm">Save Debt</button>
+            </div>
+          </form>
+        </div>
+        <div id="debts-list"></div>
+        <div id="debts-empty" class="empty-state" style="display:none">
+          <p>No debts tracked</p>
+          <p style="font-size:12px">Add debts to see avalanche vs snowball payoff strategies</p>
+        </div>
+        <div id="debt-strategy" style="display:none"></div>
       </div>
     </section>
 
@@ -743,13 +856,13 @@ const SAMPLE = [
 ];
 
 /* ============ STATE ============ */
-let state = { items: [], transactions: [], filter: 'all', addType: 'expense', editId: null, sortCol: null, sortDir: 'asc' };
+let state = { items: [], transactions: [], goals: [], debts: [], filter: 'all', addType: 'expense', editId: null, sortCol: null, sortDir: 'asc' };
 let csvData = null;
 let csvMapping = null;
 
 /* ============ STORAGE ============ */
 function save() {
-  localStorage.setItem('tally-data', JSON.stringify({ items: state.items, transactions: state.transactions }));
+  localStorage.setItem('tally-data', JSON.stringify({ items: state.items, transactions: state.transactions, goals: state.goals, debts: state.debts }));
 }
 function load() {
   try {
@@ -757,6 +870,8 @@ function load() {
     if (d) {
       state.items = d.items || [];
       state.transactions = d.transactions || [];
+      state.goals = d.goals || [];
+      state.debts = d.debts || [];
       let fixed = false;
       state.transactions.forEach(tx => {
         if (tx.date && !tx.date.match(/^\d{4}-\d{2}-\d{2}/)) {
@@ -914,6 +1029,7 @@ function render() {
   renderInsights();
   renderImport();
   renderRecurring();
+  renderGoals();
   renderAudit();
 }
 
@@ -1403,7 +1519,83 @@ function renderInsights() {
   }
   html += '</div></div>';
 
+  // Month-over-month comparison
+  if (state.transactions.length) {
+    const momMap = {};
+    state.transactions.forEach(tx => {
+      const iso = tx.date && tx.date.match(/^\d{4}-\d{2}/) ? tx.date : parseDate(tx.date);
+      const m = iso.slice(0, 7);
+      if (!m || !m.match(/^\d{4}-\d{2}$/)) return;
+      if (tx.amount >= 0) return;
+      if (!momMap[m]) momMap[m] = {};
+      momMap[m][tx.category] = (momMap[m][tx.category] || 0) + Math.abs(tx.amount);
+    });
+    const momMonths = Object.keys(momMap).sort();
+    if (momMonths.length >= 2) {
+      html += `<div class="card insight-section">
+        <h2 class="card-title">Month-over-Month Spending</h2>
+        <div class="mom-months" id="mom-months"></div>
+        <div id="mom-content"></div>
+      </div>`;
+    }
+  }
+
   content.innerHTML = html;
+
+  // Wire up MoM month selector
+  if (state.transactions.length) {
+    const momMonthsEl = document.getElementById('mom-months');
+    if (momMonthsEl) {
+      const momMap = {};
+      state.transactions.forEach(tx => {
+        const iso = tx.date && tx.date.match(/^\d{4}-\d{2}/) ? tx.date : parseDate(tx.date);
+        const m = iso.slice(0, 7);
+        if (!m || !m.match(/^\d{4}-\d{2}$/)) return;
+        if (tx.amount >= 0) return;
+        if (!momMap[m]) momMap[m] = {};
+        momMap[m][tx.category] = (momMap[m][tx.category] || 0) + Math.abs(tx.amount);
+      });
+      const momMonths = Object.keys(momMap).sort();
+      const renderMoM = (idx) => {
+        const curr = momMonths[idx], prev = momMonths[idx - 1];
+        const currData = momMap[curr], prevData = momMap[prev] || {};
+        const allCats = [...new Set([...Object.keys(currData), ...Object.keys(prevData)])];
+        const changes = allCats.map(cat => {
+          const c = currData[cat] || 0, p = prevData[cat] || 0;
+          const diff = c - p, pctChg = p > 0 ? (diff / p) * 100 : (c > 0 ? 100 : 0);
+          return { cat, curr: c, prev: p, diff, pctChg };
+        }).sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+        const currLabel = new Date(curr + '-01').toLocaleDateString('en', { month: 'short', year: 'numeric' });
+        const prevLabel = new Date(prev + '-01').toLocaleDateString('en', { month: 'short', year: 'numeric' });
+        let mhtml = `<div style="font-size:12px;color:var(--text-3);margin-bottom:10px">Comparing <strong style="color:var(--text-1)">${currLabel}</strong> vs <strong style="color:var(--text-1)">${prevLabel}</strong></div>`;
+        changes.forEach(c => {
+          const arrow = c.diff > 5 ? 'up' : c.diff < -5 ? 'down' : 'flat';
+          const arrowChar = arrow === 'up' ? '▲' : arrow === 'down' ? '▼' : '—';
+          const sign = c.diff > 0 ? '+' : '';
+          mhtml += `<div class="mom-item">
+            <span class="mom-arrow ${arrow}">${arrowChar}</span>
+            <span class="cat-dot" style="background:${catColor(c.cat)}"></span>
+            <span class="mom-cat">${escHtml(c.cat)}</span>
+            <span class="mom-amounts">${fmt(c.curr)} <span class="mom-prev">was ${fmt(c.prev)}</span></span>
+            <span class="mom-change ${arrow}">${sign}${fmt(Math.abs(c.diff))} (${c.diff > 0 ? '+' : ''}${c.pctChg.toFixed(0)}%)</span>
+          </div>`;
+        });
+        document.getElementById('mom-content').innerHTML = mhtml;
+      };
+      momMonthsEl.innerHTML = momMonths.slice(1).map((m, i) => {
+        const label = new Date(m + '-01').toLocaleDateString('en', { month: 'short', year: '2-digit' });
+        return `<button class="mom-month-btn${i === momMonths.length - 2 ? ' active' : ''}" data-idx="${i + 1}">${label}</button>`;
+      }).join('');
+      momMonthsEl.querySelectorAll('.mom-month-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          momMonthsEl.querySelectorAll('.mom-month-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderMoM(parseInt(btn.dataset.idx));
+        });
+      });
+      renderMoM(momMonths.length - 1);
+    }
+  }
 
   updateSimulator();
   const simCat = document.getElementById('sim-cat');
@@ -1649,6 +1841,236 @@ document.getElementById('btn-clear-txn').addEventListener('click', () => {
   }
 });
 
+/* ============ GOALS & DEBT ============ */
+function renderGoals() {
+  const goalsList = document.getElementById('goals-list');
+  const goalsEmpty = document.getElementById('goals-empty');
+  const debtsList = document.getElementById('debts-list');
+  const debtsEmpty = document.getElementById('debts-empty');
+  const debtStrategy = document.getElementById('debt-strategy');
+  const t = getTotals();
+  const monthlySavings = Math.max(0, t.net);
+
+  // Goals
+  if (state.goals.length) {
+    goalsEmpty.style.display = 'none';
+    goalsList.innerHTML = state.goals.map(g => {
+      const pct = Math.min(100, (g.current / g.target) * 100);
+      const remaining = Math.max(0, g.target - g.current);
+      const color = pct >= 100 ? 'var(--good)' : pct >= 50 ? 'var(--accent)' : 'var(--warn)';
+      let projection = '';
+      if (pct < 100 && monthlySavings > 0) {
+        const monthsLeft = remaining / monthlySavings;
+        const projDate = new Date();
+        projDate.setMonth(projDate.getMonth() + Math.ceil(monthsLeft));
+        projection = `At current savings rate (${fmt(monthlySavings)}/mo), you'll reach this by ${projDate.toLocaleDateString('en', { month: 'short', year: 'numeric' })}`;
+      } else if (pct < 100) {
+        projection = 'No surplus to save — adjust expenses to start progressing';
+      }
+      let deadlineNote = '';
+      if (g.deadline && pct < 100) {
+        const dl = new Date(g.deadline);
+        const now = new Date();
+        const monthsToDl = (dl.getFullYear() - now.getFullYear()) * 12 + dl.getMonth() - now.getMonth();
+        if (monthsToDl > 0) {
+          const needed = remaining / monthsToDl;
+          deadlineNote = ` · Need ${fmt(needed)}/mo to hit deadline`;
+        } else {
+          deadlineNote = ' · Deadline passed';
+        }
+      }
+      return `<div class="goal-item">
+        <div class="goal-header">
+          <div>
+            <div class="goal-name">${escHtml(g.name)}</div>
+            <div class="goal-meta">${g.deadline ? 'Due ' + new Date(g.deadline).toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' }) : 'No deadline'}${deadlineNote}</div>
+          </div>
+          <div class="goal-actions">
+            <button class="btn-edit" data-goal-edit="${g.id}">Edit</button>
+            <button class="btn-del" data-goal-del="${g.id}">&times;</button>
+          </div>
+        </div>
+        <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <div class="goal-stats">
+          <span>${fmt(g.current)} of ${fmt(g.target)} (${pct.toFixed(0)}%)</span>
+          <span>${fmt(remaining)} to go</span>
+        </div>
+        ${projection ? `<div class="goal-projection">${projection}</div>` : ''}
+      </div>`;
+    }).join('');
+    goalsList.querySelectorAll('[data-goal-del]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (confirm('Delete this goal?')) { state.goals = state.goals.filter(g => g.id !== btn.dataset.goalDel); save(); render(); }
+      });
+    });
+    goalsList.querySelectorAll('[data-goal-edit]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const g = state.goals.find(x => x.id === btn.dataset.goalEdit);
+        if (!g) return;
+        const newAmt = prompt('Update saved amount for "' + g.name + '":', g.current);
+        if (newAmt !== null) { g.current = Math.max(0, parseFloat(newAmt) || 0); save(); render(); }
+      });
+    });
+  } else {
+    goalsEmpty.style.display = 'block';
+    goalsList.innerHTML = '';
+  }
+
+  // Debts
+  if (state.debts.length) {
+    debtsEmpty.style.display = 'none';
+    debtsList.innerHTML = state.debts.map(d => `<div class="debt-item">
+      <div class="debt-header">
+        <div class="debt-name">${escHtml(d.name)}</div>
+        <div class="goal-actions">
+          <button class="btn-edit" data-debt-edit="${d.id}">Edit</button>
+          <button class="btn-del" data-debt-del="${d.id}">&times;</button>
+        </div>
+      </div>
+      <div class="debt-details">
+        <span>Balance: <strong>${fmt(d.balance)}</strong></span>
+        <span>Rate: <strong>${d.rate}%</strong></span>
+        <span>Min payment: <strong>${fmt(d.minpay)}/mo</strong></span>
+      </div>
+    </div>`).join('');
+    debtsList.querySelectorAll('[data-debt-del]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (confirm('Delete this debt?')) { state.debts = state.debts.filter(d => d.id !== btn.dataset.debtDel); save(); render(); }
+      });
+    });
+    debtsList.querySelectorAll('[data-debt-edit]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const d = state.debts.find(x => x.id === btn.dataset.debtEdit);
+        if (!d) return;
+        const newBal = prompt('Update balance for "' + d.name + '":', d.balance);
+        if (newBal !== null) { d.balance = Math.max(0, parseFloat(newBal) || 0); save(); render(); }
+      });
+    });
+    renderDebtStrategy(debtStrategy);
+  } else {
+    debtsEmpty.style.display = 'block';
+    debtsList.innerHTML = '';
+    debtStrategy.style.display = 'none';
+  }
+}
+
+function simulatePayoff(debts, strategy) {
+  let pool = debts.map(d => ({ ...d, bal: d.balance }));
+  const totalMinPay = pool.reduce((s, d) => s + d.minpay, 0);
+  const t = getTotals();
+  const extra = Math.max(0, t.net);
+  let totalAvailable = totalMinPay + extra;
+  let months = 0, totalInterest = 0;
+  const order = [];
+
+  while (pool.some(d => d.bal > 0) && months < 600) {
+    months++;
+    pool.forEach(d => {
+      if (d.bal <= 0) return;
+      d.bal += d.bal * (d.rate / 100 / 12);
+      totalInterest += d.bal * (d.rate / 100 / 12);
+    });
+    let remaining = totalAvailable;
+    pool.forEach(d => {
+      if (d.bal <= 0) return;
+      const pay = Math.min(d.minpay, d.bal);
+      d.bal -= pay;
+      remaining -= pay;
+    });
+    if (strategy === 'avalanche') pool.sort((a, b) => b.rate - a.rate);
+    else pool.sort((a, b) => a.bal - b.bal);
+    pool.forEach(d => {
+      if (d.bal <= 0 || remaining <= 0) return;
+      const pay = Math.min(remaining, d.bal);
+      d.bal -= pay;
+      remaining -= pay;
+      if (d.bal <= 0 && !order.includes(d.name)) order.push(d.name);
+    });
+    pool.forEach(d => { if (d.bal <= 0 && !order.includes(d.name)) order.push(d.name); });
+  }
+  return { months, totalInterest, order };
+}
+
+function renderDebtStrategy(container) {
+  if (state.debts.length < 1) { container.style.display = 'none'; return; }
+  container.style.display = 'block';
+  const avalanche = simulatePayoff(state.debts, 'avalanche');
+  const snowball = simulatePayoff(state.debts, 'snowball');
+  const t = getTotals();
+  const extra = Math.max(0, t.net);
+  const totalDebt = state.debts.reduce((s, d) => s + d.balance, 0);
+  const saved = Math.abs(snowball.totalInterest - avalanche.totalInterest);
+
+  let html = `<div class="strategy-section">
+    <div class="strategy-title">Payoff Strategy Comparison</div>
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">Total debt: ${fmt(totalDebt)} · Extra monthly surplus: ${fmt(extra)}</div>
+    <div class="strategy-compare">
+      <div class="strategy-card">
+        <h4>Avalanche <span style="font-size:11px;font-weight:400;color:var(--text-3)">(highest interest first)</span></h4>
+        <div class="strat-val" style="color:var(--good)">${Math.ceil(avalanche.months / 12)}y ${avalanche.months % 12}mo</div>
+        <div class="strat-sub">Total interest: ${fmt(avalanche.totalInterest)}</div>
+      </div>
+      <div class="strategy-card">
+        <h4>Snowball <span style="font-size:11px;font-weight:400;color:var(--text-3)">(smallest balance first)</span></h4>
+        <div class="strat-val" style="color:var(--accent)">${Math.ceil(snowball.months / 12)}y ${snowball.months % 12}mo</div>
+        <div class="strat-sub">Total interest: ${fmt(snowball.totalInterest)}</div>
+      </div>
+    </div>`;
+
+  if (saved > 1) {
+    html += `<div class="strategy-winner">Avalanche saves you ${fmt(saved)} in interest</div>`;
+  }
+
+  html += `<div class="strategy-compare" style="margin-top:12px">
+    <div class="strategy-order"><strong>Avalanche order:</strong><ol>${avalanche.order.map(n => `<li>${escHtml(n)}</li>`).join('')}</ol></div>
+    <div class="strategy-order"><strong>Snowball order:</strong><ol>${snowball.order.map(n => `<li>${escHtml(n)}</li>`).join('')}</ol></div>
+  </div></div>`;
+
+  container.innerHTML = html;
+}
+
+// Goal form handlers
+document.getElementById('btn-add-goal').addEventListener('click', () => {
+  document.getElementById('goal-form-wrap').style.display = 'block';
+});
+document.getElementById('btn-cancel-goal').addEventListener('click', () => {
+  document.getElementById('goal-form-wrap').style.display = 'none';
+  document.getElementById('goal-form').reset();
+});
+document.getElementById('goal-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  state.goals.push({
+    id: uid(), name: f.get('gname').trim(), target: parseFloat(f.get('gtarget')),
+    current: parseFloat(f.get('gcurrent')) || 0, deadline: f.get('gdeadline') || ''
+  });
+  save();
+  document.getElementById('goal-form-wrap').style.display = 'none';
+  e.target.reset();
+  render();
+});
+
+// Debt form handlers
+document.getElementById('btn-add-debt').addEventListener('click', () => {
+  document.getElementById('debt-form-wrap').style.display = 'block';
+});
+document.getElementById('btn-cancel-debt').addEventListener('click', () => {
+  document.getElementById('debt-form-wrap').style.display = 'none';
+  document.getElementById('debt-form').reset();
+});
+document.getElementById('debt-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  state.debts.push({
+    id: uid(), name: f.get('dname').trim(), balance: parseFloat(f.get('dbalance')),
+    rate: parseFloat(f.get('drate')), minpay: parseFloat(f.get('dminpay'))
+  });
+  save();
+  document.getElementById('debt-form-wrap').style.display = 'none';
+  e.target.reset();
+  render();
+});
+
 /* ============ RECURRING DETECTION ============ */
 let detectedRecurring = [];
 
@@ -1832,7 +2254,7 @@ document.getElementById('btn-export').addEventListener('click', () => {
 
 /* ============ DATA SAVE/LOAD ============ */
 document.getElementById('btn-save-data').addEventListener('click', () => {
-  const data = { items: state.items, transactions: state.transactions, exported: new Date().toISOString() };
+  const data = { items: state.items, transactions: state.transactions, goals: state.goals, debts: state.debts, exported: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -1859,9 +2281,19 @@ document.getElementById('load-data-input').addEventListener('change', e => {
           const existingTxn = new Set(state.transactions.map(t => t.id));
           data.transactions.forEach(t => { if (!existingTxn.has(t.id)) state.transactions.push(t); });
         }
+        if (data.goals) {
+          const existingGoals = new Set(state.goals.map(g => g.id));
+          data.goals.forEach(g => { if (!existingGoals.has(g.id)) state.goals.push(g); });
+        }
+        if (data.debts) {
+          const existingDebts = new Set(state.debts.map(d => d.id));
+          data.debts.forEach(d => { if (!existingDebts.has(d.id)) state.debts.push(d); });
+        }
       } else {
         state.items = data.items;
         state.transactions = data.transactions || [];
+        state.goals = data.goals || [];
+        state.debts = data.debts || [];
       }
       save(); render();
       alert('Data loaded successfully. ' + state.items.length + ' budget items.');
